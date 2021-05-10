@@ -21,12 +21,13 @@ public:
 
     // TODO: Declare any necessary private members
 private:
-    int ProcessID_;
-    std::string user_;
-    std::string cmd_;
-    float CpuUsage_;
-    std::string ram_;
-    long int uptime_;
+    int pid_;
+    float cpuutilization_;
+    // std::string user_;
+    // std::string cmd_;
+    // float CpuUsage_;
+    // std::string ram_;
+    // long int uptime_;
 
 };
 
