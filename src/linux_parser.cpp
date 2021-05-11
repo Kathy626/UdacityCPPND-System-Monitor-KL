@@ -384,14 +384,13 @@ long LinuxParser::UpTime(int pid) {
   std::ifstream filestream(kProcDirectory + "/" + std::to_string(pid)  + kStatFilename);
   string line, value;
   long uptime = 0;
+  const int StartTime = 22;
   if (filestream.is_open()) {
       while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
-      for (int i = 1; i <= kStarttime_; i++) {
+      for (int i = 1; i < StartTime; i++) {
         linestream >> value;
-        if (i == kStarttime_) {
-          // read the starttime value in clock ticks and convert to seconds
-          // devide by clock ticks per second
+        if (i == StartTime) {
           try {
             uptime = std::stol(value) / sysconf(_SC_CLK_TCK);
             return uptime;

@@ -23,6 +23,7 @@ public:
 private:
     int pid_;
     float cpuutilization_;
+    
     // std::string user_;
     // std::string cmd_;
     // float CpuUsage_;
