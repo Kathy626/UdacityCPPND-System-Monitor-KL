@@ -243,9 +243,9 @@ vector<LinuxParser::CpuTimes> LinuxParser::CpuUtilPercentage()
           thisCpuTimes.totalTime = totalIdleTime + totalNoIdleTime;
 
           CpuTimesResult.emplace_back(thisCpuTimes);
-      }     
-      return CpuTimesResult;
-  }
+      }    
+  } 
+  return CpuTimesResult;
 }
 // TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { 
@@ -253,11 +253,10 @@ vector<string> LinuxParser::CpuUtilization() {
   sleep(1);
   std::vector<LinuxParser::CpuTimes> currentCPUTimes = LinuxParser::CpuUtilPercentage(); 
   vector<std::string> CpuUtilizationResult;
-  for(int i = 0; i < currentCPUTimes.size(); i++) {
-      long CPUusage;
-      long totalDelta = currentCPUTimes[i].totalTime - prevCPUTimes[i].totalTime ;
-      long idleDelta = currentCPUTimes[i].idleTime - prevCPUTimes[i].idleTime ;
-      CpuUtilizationResult.emplace_back(std::to_string((totalDelta - idleDelta)*1.0/totalDelta*1.0));
+  for(int i = 0; i < (int)(currentCPUTimes.size()); i++) {
+      long dTotal = currentCPUTimes[i].totalTime - prevCPUTimes[i].totalTime ;
+      long dIdle = currentCPUTimes[i].idleTime - prevCPUTimes[i].idleTime ;
+      CpuUtilizationResult.emplace_back(std::to_string((dTotal - dIdle)/dTotal));
   }
   return CpuUtilizationResult;
   }
