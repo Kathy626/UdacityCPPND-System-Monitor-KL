@@ -52,7 +52,24 @@ std::string Ram(int pid);
 std::string Uid(int pid);
 std::string User(int pid);
 long int UpTime(int pid);
+
+// New Members:
+// For CPU utilization
+// refered to https://knowledge.udacity.com/questions/192173
+struct CpuTimes {
+  long idleTime;
+  long totalTime;
+};
+static std::vector<CpuTimes> previousVector;
+std::vector<CpuTimes> CpuUtilPercentage();
+
 float CpuUtilization(int pid); // This is added for src/process.cpp
+struct CpuProcessInfo {
+  float totalTime;
+  float seconds;
+};
+CpuProcessInfo GetProcessCpuInfo(int pid);
+
 };  // namespace LinuxParser
 
 #endif
