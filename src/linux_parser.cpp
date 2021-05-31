@@ -232,7 +232,7 @@ vector<LinuxParser::CpuTimes> LinuxParser::CpuUtilPercentage()
           std::string key;
           long user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice;
           linestream >> key >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guest_nice;
-          if (key.find("cpu") != string::npos)
+          if (key.find("cpu") == string::npos)   // not found
               return CpuTimesResult;
           
           long totalIdleTime = idle + iowait;
