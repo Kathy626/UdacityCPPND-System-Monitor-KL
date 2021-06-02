@@ -254,9 +254,11 @@ vector<string> LinuxParser::CpuUtilization() {
   std::vector<LinuxParser::CpuTimes> currentCPUTimes = LinuxParser::CpuUtilPercentage(); 
   vector<std::string> CpuUtilizationResult;
   for(int i = 0; i < (int)(currentCPUTimes.size()); i++) {
+      std::stringstream res;
       long dTotal = currentCPUTimes[i].totalTime - prevCPUTimes[i].totalTime ;
       long dIdle = currentCPUTimes[i].idleTime - prevCPUTimes[i].idleTime ;
-      CpuUtilizationResult.emplace_back(std::to_string((dTotal - dIdle)/dTotal));
+      res << (dTotal - dIdle)*1.0/dTotal*1.0;
+      CpuUtilizationResult.emplace_back(res.str());   //
   }
   return CpuUtilizationResult;
   }
@@ -396,15 +398,11 @@ long LinuxParser::UpTime(int pid) {
   if (filestream.is_open()) {
       while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
-      for (int i = 1; i < StartTime; i++) {
+      for (int i = 1; i <= StartTime; i++) {
         linestream >> value;
         if (i == StartTime) {
-          try {
-            uptime = std::stol(value) / sysconf(_SC_CLK_TCK);
-            return uptime;
-          } catch (const std::invalid_argument& arg) {
-            return 0;
-          }
+          uptime = std::stol(value) / sysconf(_SC_CLK_TCK);
+          return uptime;
         }
       }
     }
@@ -441,10 +439,17 @@ LinuxParser::CpuProcessInfo LinuxParser::GetProcessCpuInfo(int pid) {
 
   float LinuxParser::CpuUtilization(int pid)
   {
-    //LinuxParser::CpuProcessInfo previous = LinuxParser::GetProcessCpuInfo(pid);
-    //sleep(1);
-    LinuxParser::CpuProcessInfo current = LinuxParser::GetProcessCpuInfo(pid);
-    long secondsd = current.seconds; // - previous.seconds;
-    long totald = current.totalTime;// - previous.totalTime;
-    return totald*1.0/secondsd;//secondsd;
+    // //LinuxParser::CpuProcessInfo previous = LinuxParser::GetProcessCpuInfo(pid);
+    // //sleep(1);
+    // LinuxParser::CpuProcessInfo current = LinuxParser::GetProcessCpuInfo(pid);
+    // long secondsd = current.seconds; // - previous.seconds;
+    // long totald = current.totalTime;// - previous.totalTime;
+    // return totald*1.0/secondsd;//secondsd;
+    long totalTime = LinuxParser::ActiveJiffies(pid);
+    long startTime = LinuxParser::UpTime(pid);
+    long upTime = LinuxParser::UpTime();
+  
+    long seconds = upTime - (startTime / sysconf(_SC_CLK_TCK));
+    
+    return (totalTime / sysconf(_SC_CLK_TCK)) / seconds;
   }
