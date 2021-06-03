@@ -14,15 +14,6 @@ using std::size_t;
 using std::string;
 using std::vector;
 
-System::System(){
-    vector<int> pIDs = LinuxParser::Pids();
-    for(auto pID : pIDs){
-        Process thisPid(pID);
-        processes_.emplace_back(thisPid);
-    }
-}
-
-
 // TODO: Return the system's CPU
 Processor& System::Cpu() { 
     return cpu_; 
@@ -37,6 +28,7 @@ vector<Process>& System::Processes() {
         Process thisPid(pID);
         processes_.emplace_back(thisPid);
     }
+    std::sort(processes_.begin(), processes_.end());
     return processes_;
 }
 

@@ -257,7 +257,7 @@ vector<string> LinuxParser::CpuUtilization() {
       std::stringstream res;
       long dTotal = currentCPUTimes[i].totalTime - prevCPUTimes[i].totalTime ;
       long dIdle = currentCPUTimes[i].idleTime - prevCPUTimes[i].idleTime ;
-      res << (dTotal - dIdle)*1.0/dTotal*1.0;
+      res << ((dTotal - dIdle)*1.0/dTotal*1.0)*100;  // *100 for percentage
       CpuUtilizationResult.emplace_back(res.str());   //
   }
   return CpuUtilizationResult;
