@@ -54,7 +54,7 @@ string LinuxParser::Kernel()
   return kernel;
 }
 
-// BONUS: Update this to use std::filesystem
+// DONE:BONUS: Update this to use std::filesystem
 vector<int> LinuxParser::Pids()
 {
   vector<int> pids;
@@ -78,55 +78,45 @@ vector<int> LinuxParser::Pids()
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
+//DONE: TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization()
 {
-  string line, key, memVal;
-  float memTotal = 0;
-  float memFree = 0;
-
-  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
-  if (filestream.is_open())
-  {
-    while (std::getline(filestream, line))
-    {
-      //std::remove(line.begin(), line.end(), ' ');
-      //std::replace(line.begin(), line.end(), ':', ' ');
-
-      std::istringstream linestream(line);
-      while (linestream >> key >> memVal)
-      {
-        // search for key memTotal
-        if (key == "MemTotal:")
-        {
-          memTotal = std::stof(memVal);
-        }
-        // search for key memFree
-        else if (key == "MemFree:")
-        {
-          memFree = std::stof(memVal);
-          break;
+  float mem_total = LinuxParser::ParseMemInfo(filterMemTotalString);
+  float mem_free = LinuxParser::ParseMemInfo(filterMemFreeString);
+  float mem_used = mem_total - mem_free; 
+  return mem_used/mem_total;
+}
+float LinuxParser::ParseMemInfo(std::string key){
+  string line;
+  string key_;
+  float value;
+  std::ifstream filestream(kProcDirectory+kMeminfoFilename); // streams from this file
+  if (filestream.is_open()) { // Checks if the file is open
+    while (std::getline(filestream, line)) { // Executes upto the last line
+      std::istringstream linestream(line); // reads a string until whitespace is reached (<sstream> lib)
+      while (linestream >> key_ >> value) { // extracts the keys and values. Here we need only the 1st and 2nd strings
+        if (key_ == key) {
+          return value;
         }
       }
     }
   }
-  return ((memTotal - memFree) / memTotal);
+  return value;
 }
 
-// TODO: Read and return the system uptime
+//DONE: TODO: Read and return the system uptime
 long LinuxParser::UpTime()
 {
-  std::ifstream filestream(kProcDirectory + kUptimeFilename);
-  long upTime = 0;
-  long idleTime;
-  if (filestream.is_open())
+  long uptime_system;
+  string line;
+
+  std::ifstream stream(kProcDirectory + kUptimeFilename);
+  if (stream.is_open())
   {
-    std::string line;
-    std::getline(filestream, line);
-    std::istringstream linestream(line);
-    linestream >> upTime >> idleTime;
+    stream >> uptime_system;
+    return uptime_system;
   }
-  return upTime;
+  return uptime_system;
 }
 
 // TODO: Read and return the number of jiffies for the system

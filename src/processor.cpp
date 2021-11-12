@@ -4,5 +4,7 @@
 // TODO: Return the aggregate CPU utilization
 float Processor::Utilization()
 {
-    return std::stof(LinuxParser::CpuUtilization()[0]);
+    long total = LinuxParser::Jiffies();
+    long active = LinuxParser::ActiveJiffies();
+    return active * (1.f / total);
 }
