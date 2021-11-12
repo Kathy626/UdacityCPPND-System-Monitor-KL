@@ -10,7 +10,6 @@ It contains relevant attributes as shown below
 class Process
 {
 public:
-    Process(int pID);
     Process(int pid);
     int Pid() const;
     std::string User();
