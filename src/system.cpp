@@ -15,17 +15,22 @@ using std::string;
 using std::vector;
 
 // Return the system's CPU
-Processor& System::Cpu() { return cpu_; }
+Processor &System::Cpu() { return cpu_; }
 
 // Return a container composed of the system's processes
-vector<Process>& System::Processes() {
-  vector<int> pids = LinuxParser::Pids();
+// this is from my 5 months ago submission :)
+// please see this commit: 
+// https://github.com/Kathy626/UdacityCPPND-System-Monitor-KL/blob/ee7f2374f16ee98a5c01eaa256f4a9cb61516a78/src/system.cpp
+vector<Process> &System::Processes()
+{
   processes_.clear();
-  for (int pid : pids) {
-    Process process(pid);
-    processes_.push_back(process);
+  vector<int> pIDs = LinuxParser::Pids();
+  for (auto& pID : pIDs)
+  {
+    Process thisPid(pID);
+    processes_.emplace_back(thisPid);
   }
-  std::sort(processes_.rbegin(),processes_.rend());
+  std::sort(processes_.begin(), processes_.end());
   return processes_;
 }
 
