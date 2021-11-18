@@ -21,6 +21,7 @@ public:
 
 private:
     int pid_;
+    float cpuutilization_;
 };
 
 #endif

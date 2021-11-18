@@ -81,31 +81,38 @@ vector<int> LinuxParser::Pids()
 // Read and return the system memory utilization
 float LinuxParser::MemoryUtilization()
 {
-  string line;
-  string key;
-  string value;
-  string mtotal;
-  string mfree;
-  std::ifstream stream(kProcDirectory + kMeminfoFilename);
-  if (stream.is_open())
+  // this is from my old submission :) 
+  // see https://github.com/Kathy626/UdacityCPPND-System-Monitor-KL/blob/ee7f2374f16ee98a5c01eaa256f4a9cb61516a78/src/linux_parser.cpp
+  std::string line, key, memVal;
+  float memTotal = 0;
+  float memFree = 0;
+
+  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
+  if (filestream.is_open())
   {
-    while (std::getline(stream, line))
+    while (std::getline(filestream, line))
     {
+      //std::remove(line.begin(), line.end(), ' ');
+      //std::replace(line.begin(), line.end(), ':', ' ');
+
       std::istringstream linestream(line);
-      while (linestream >> key >> value)
+      while (linestream >> key >> memVal)
       {
+        // search for key memTotal
         if (key == "MemTotal:")
         {
-          mtotal = value;
+          memTotal = std::stof(memVal);
         }
-        if (key == "MemFree:")
+        // search for key memFree
+        else if (key == "MemFree:")
         {
-          mfree = value;
+          memFree = std::stof(memVal);
+          break;
         }
       }
     }
   }
-  return (stof(mtotal) - stof(mfree)) / stof(mtotal);
+  return ((memTotal - memFree) / memTotal);
 }
 
 // Read and return the system uptime
@@ -348,3 +355,17 @@ long LinuxParser::UpTime(int pid)
   }
   return LinuxParser::UpTime() - (stol(values[21]) / 100);
 }
+
+
+// From my own 5 months ago's submission :)
+// see https://github.com/Kathy626/UdacityCPPND-System-Monitor-KL/blob/ee7f2374f16ee98a5c01eaa256f4a9cb61516a78/src/linux_parser.cpp
+float LinuxParser::CpuUtilization(int pid)
+  {
+    long totalTime = LinuxParser::ActiveJiffies(pid);
+    long startTime = LinuxParser::UpTime(pid);
+    long upTime = LinuxParser::UpTime();
+  
+    long seconds = upTime - (startTime / sysconf(_SC_CLK_TCK));
+    
+    return (totalTime / sysconf(_SC_CLK_TCK)) / seconds;
+  }
