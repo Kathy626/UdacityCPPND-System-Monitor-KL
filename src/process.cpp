@@ -7,10 +7,6 @@
 #include "process.h"
 #include "linux_parser.h"
 
-using std::string;
-using std::to_string;
-using std::vector;
-
 Process::Process(int pid) {
   pid_ = pid;
 }
@@ -27,13 +23,13 @@ float Process::CpuUtilization() const {
 }
 
 // Returning the command that generated this process
-string Process::Command() { return LinuxParser::Command(Pid()); }
+std::string Process::Command() { return LinuxParser::Command(Pid()); }
 
 // Returning this process's memory utilization
-string Process::Ram() const{ return LinuxParser::Ram(Pid()); }
+std::string Process::Ram() const{ return LinuxParser::Ram(Pid()); }
 
 // Returning the user (name) that generated this process
-string Process::User() { return LinuxParser::User(Pid()); }
+std::string Process::User() { return LinuxParser::User(Pid()); }
 
 // Returning the age of this process (in seconds)
 long int Process::UpTime() { return LinuxParser::UpTime(Pid()); }
