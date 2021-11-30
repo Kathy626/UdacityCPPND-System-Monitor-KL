@@ -358,15 +358,36 @@ long LinuxParser::UpTime(int pid)
 }
 
 
-// From my own 5 months ago's submission :)
-// see https://github.com/Kathy626/UdacityCPPND-System-Monitor-KL/blob/ee7f2374f16ee98a5c01eaa256f4a9cb61516a78/src/linux_parser.cpp
-float LinuxParser::CpuUtilization(int pid)
-  {
-    long totalTime = LinuxParser::ActiveJiffies(pid);
-    long startTime = LinuxParser::UpTime(pid);
-    long upTime = LinuxParser::UpTime();
+// Refered to Stackoverflow
+// https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat
+// we need #14 utime, #15 stime, #16 cutime, #17 cstime, #22 starttime
+float LinuxParser::CpuUtilization(int pid) {  
+  string line;
+ 
+  std::ifstream filestream(kProcDirectory + to_string(pid) + kStatFilename);
   
-    long seconds = upTime - (startTime / sysconf(_SC_CLK_TCK));
-    
-    return (totalTime / sysconf(_SC_CLK_TCK)) / seconds;
-  }
+  std::getline(filestream, line); // file contains only one line    
+  std::istringstream buffer(line);
+  std::istream_iterator<string> beginning(buffer), end;
+  std::vector<string> line_content(beginning, end);
+
+  const int utimeID = 14 - 1;  // -1 due to starts at 0
+  const int stimeID = 15 - 1;
+  const int cutimeID = 16 - 1;
+  const int cstimeID = 17 - 1;
+  const int starttimeID = 22 - 1;
+
+  float uptime = LinuxParser::UpTime();
+  float utime = stof(line_content[13]);
+  float stime = stof(line_content[14]);
+  float cutime = stof(line_content[15]);
+  float cstime = stof(line_content[16]);
+  float starttime = stof(line_content[21]); 
+  float hertz = sysconf(_SC_CLK_TCK);
+
+  float total_time = utime + stime + cutime + cstime;
+  float seconds = uptime - (starttime / hertz);
+  float cpu_load = 100.0f * (total_time / hertz ) / seconds;
+  
+  return cpu_load;
+}
