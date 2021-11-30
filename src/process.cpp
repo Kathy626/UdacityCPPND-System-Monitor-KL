@@ -9,6 +9,7 @@
 
 Process::Process(int pid) {
   pid_ = pid;
+  cpuutilization_ = CpuUtilization();
 }
 
 // Returning this process's ID
