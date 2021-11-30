@@ -11,6 +11,9 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+// Refered to Stackoverflow for this utime, stime, cutime and cstime,
+// for original link, please see
+// https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat
 const int utimeID = 14 - 1;  // - 1 due to starts at 0
 const int stimeID = 15 - 1;
 const int cutimeID = 16 - 1;
