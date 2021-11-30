@@ -20,8 +20,8 @@ public:
     bool operator<(Process const &a) const;
 
 private:
-    int pid_;
-    float cpuutilization_;
+    int pid_ = 0;
+    float cpuutilization_ = 0.0f;
 };
 
 #endif

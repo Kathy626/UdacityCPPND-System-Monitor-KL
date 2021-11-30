@@ -38,7 +38,7 @@ float Processor::Utilization()
 
     if(Totalld > 0)
     {
-        Cpu_Utilization = (float)((Totalld - Idled) / Totalld);
+        Cpu_Utilization = static_cast<float>((Totalld - Idled) / Totalld);
     }
 
     /* update previous total and idle value */
